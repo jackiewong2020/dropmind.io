@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, User, ChevronRight, Sun, Moon, Settings, Globe, Brain, Cloud, Keyboard, Database, LogOut, Sparkles, ShieldCheck } from 'lucide-react';
+import { X, User, ChevronRight, Sun, Moon, Settings, Globe, Brain, Cloud, Keyboard, Database, LogOut, Sparkles, ShieldCheck, Type, Scaling } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 type Section = 'general' | 'ai' | 'sync' | 'data';
@@ -11,6 +11,10 @@ export function SettingsModal({
   setTheme,
   language,
   setLanguage,
+  fontFamily,
+  setFontFamily,
+  fontSize,
+  setFontSize,
   aiModel,
   setAiModel,
   dropsCount,
@@ -25,6 +29,10 @@ export function SettingsModal({
   setTheme: (theme: 'light' | 'dark') => void,
   language: 'zh' | 'en',
   setLanguage: (lang: 'zh' | 'en') => void,
+  fontFamily: 'sans' | 'serif' | 'mono',
+  setFontFamily: (f: 'sans' | 'serif' | 'mono') => void,
+  fontSize: 'sm' | 'base' | 'lg',
+  setFontSize: (s: 'sm' | 'base' | 'lg') => void,
   aiModel: 'gemini-3.1' | 'kimi',
   setAiModel: (model: 'gemini-3.1' | 'kimi') => void,
   dropsCount: number,
@@ -179,6 +187,48 @@ export function SettingsModal({
                             {language === 'zh' ? '简体中文' : 'English'}
                           </button>
                         </div>
+
+                        <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-white dark:bg-zinc-800 rounded-lg shadow-sm">
+                              <Type className="w-4 h-4 text-blue-500" />
+                            </div>
+                            <div>
+                              <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">字体设置</div>
+                              <div className="text-xs text-zinc-500 dark:text-zinc-400">选择界面显示字体</div>
+                            </div>
+                          </div>
+                          <select 
+                            value={fontFamily}
+                            onChange={(e) => setFontFamily(e.target.value as any)}
+                            className="bg-white dark:bg-zinc-800 px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 border border-zinc-100 dark:border-zinc-700 shadow-sm outline-none cursor-pointer"
+                          >
+                            <option value="sans">无衬线 (Sans)</option>
+                            <option value="serif">衬线 (Serif)</option>
+                            <option value="mono">等宽 (Mono)</option>
+                          </select>
+                        </div>
+
+                        <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-white dark:bg-zinc-800 rounded-lg shadow-sm">
+                              <Scaling className="w-4 h-4 text-purple-500" />
+                            </div>
+                            <div>
+                              <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">字号设置</div>
+                              <div className="text-xs text-zinc-500 dark:text-zinc-400">调整界面文字大小</div>
+                            </div>
+                          </div>
+                          <select 
+                            value={fontSize}
+                            onChange={(e) => setFontSize(e.target.value as any)}
+                            className="bg-white dark:bg-zinc-800 px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 border border-zinc-100 dark:border-zinc-700 shadow-sm outline-none cursor-pointer"
+                          >
+                            <option value="sm">小 (Small)</option>
+                            <option value="base">中 (Medium)</option>
+                            <option value="lg">大 (Large)</option>
+                          </select>
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -245,11 +295,32 @@ export function SettingsModal({
                         <Cloud className="w-4 h-4" />
                         云端同步
                       </div>
+                      
+                      <div className="p-6 bg-zinc-50 dark:bg-zinc-950 rounded-3xl border border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm flex items-center justify-center border border-zinc-100 dark:border-zinc-800">
+                            <svg className="w-6 h-6" viewBox="0 0 87.3 57.8" xmlns="http://www.w3.org/2000/svg"><path d="M58.9 57.8H28.4L14.2 33.3l15.3-26.5h30.5l15.3 26.5z" fill="#00832d"/><path d="M58.9 57.8l14.2-24.5-15.3-26.5H28.4l15.3 26.5z" fill="#0066da"/><path d="M14.2 33.3L28.4 57.8h30.5L43.7 33.3z" fill="#e94235"/><path d="M28.4 57.8L14.2 33.3 28.4 8.8h30.5l14.2 24.5z" fill="#ffba00"/></svg>
+                          </div>
+                          <div>
+                            <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">Google Drive</h3>
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                              授权并自动同步数据到 Google Drive
+                            </p>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => alert('正在跳转到 Google 授权页面...')}
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors shadow-sm shadow-blue-500/20"
+                        >
+                          授权连接
+                        </button>
+                      </div>
+
                       <div className="p-8 bg-zinc-50 dark:bg-zinc-950 rounded-3xl border border-zinc-100 dark:border-zinc-800 text-center">
                         <div className="w-20 h-20 bg-white dark:bg-zinc-900 rounded-3xl shadow-xl mx-auto flex items-center justify-center mb-6 border border-zinc-100 dark:border-zinc-800">
                           <Cloud className="w-10 h-10 text-indigo-500" />
                         </div>
-                        <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">连接坚果云</h3>
+                        <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">连接坚果云 (WebDAV)</h3>
                         <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-8 max-w-xs mx-auto">
                           将你的笔记自动同步到坚果云，实现多端数据一致与永久备份。
                         </p>

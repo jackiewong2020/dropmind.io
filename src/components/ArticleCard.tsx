@@ -85,7 +85,7 @@ Kayla在自己创业初期，立志于打造一个服装品牌，尽管她的起
       className="bg-white dark:bg-zinc-900 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-800 overflow-hidden mb-6"
     >
       <div className="p-8 border-b border-zinc-50 dark:border-zinc-800">
-        <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 leading-tight mb-6">
+        <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 leading-tight mb-6">
           {drop?.title || "服装品牌成功案例分析与SOP执行指南 结合Kayla等实际案例..."}
         </h2>
         <div className="flex items-center justify-between">

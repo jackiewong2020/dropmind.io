@@ -32,6 +32,12 @@ export default function App() {
     const saved = localStorage.getItem('dropmind_language');
     return (saved as 'zh' | 'en') || 'zh';
   });
+  const [fontFamily, setFontFamily] = useState<'sans' | 'serif' | 'mono'>(() => {
+    return (localStorage.getItem('dropmind_fontFamily') as 'sans' | 'serif' | 'mono') || 'sans';
+  });
+  const [fontSize, setFontSize] = useState<'sm' | 'base' | 'lg'>(() => {
+    return (localStorage.getItem('dropmind_fontSize') as 'sm' | 'base' | 'lg') || 'base';
+  });
 
   // Apply theme
   useEffect(() => {
@@ -47,6 +53,14 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('dropmind_language', language);
   }, [language]);
+
+  useEffect(() => {
+    localStorage.setItem('dropmind_fontFamily', fontFamily);
+  }, [fontFamily]);
+
+  useEffect(() => {
+    localStorage.setItem('dropmind_fontSize', fontSize);
+  }, [fontSize]);
   
   return view === 'landing' ? (
     <LandingPage onEnter={() => setView('app')} theme={theme} />
@@ -57,16 +71,24 @@ export default function App() {
       setTheme={setTheme}
       language={language}
       setLanguage={setLanguage}
+      fontFamily={fontFamily}
+      setFontFamily={setFontFamily}
+      fontSize={fontSize}
+      setFontSize={setFontSize}
     />
   );
 }
 
-function AppInterface({ onBack, theme, setTheme, language, setLanguage }: { 
+function AppInterface({ onBack, theme, setTheme, language, setLanguage, fontFamily, setFontFamily, fontSize, setFontSize }: { 
   onBack: () => void, 
   theme: 'light' | 'dark', 
   setTheme: (t: 'light' | 'dark') => void,
   language: 'zh' | 'en',
-  setLanguage: (l: 'zh' | 'en') => void
+  setLanguage: (l: 'zh' | 'en') => void,
+  fontFamily: 'sans' | 'serif' | 'mono',
+  setFontFamily: (f: 'sans' | 'serif' | 'mono') => void,
+  fontSize: 'sm' | 'base' | 'lg',
+  setFontSize: (s: 'sm' | 'base' | 'lg') => void
 }) {
   const [drops, setDrops] = useState<DropItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('全部');
@@ -227,8 +249,11 @@ function AppInterface({ onBack, theme, setTheme, language, setLanguage }: {
     return a.createdAt - b.createdAt;
   });
 
+  const fontClass = fontFamily === 'serif' ? 'font-serif' : fontFamily === 'mono' ? 'font-mono' : 'font-sans';
+  const sizeClass = fontSize === 'sm' ? 'text-sm' : fontSize === 'lg' ? 'text-lg' : 'text-base';
+
   return (
-    <div className="flex h-screen w-full text-zinc-900 dark:text-zinc-100 font-sans overflow-hidden selection:bg-indigo-100 selection:text-indigo-900 dark:selection:bg-indigo-900 dark:selection:text-indigo-100 bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
+    <div className={`flex h-screen w-full text-zinc-900 dark:text-zinc-100 ${fontClass} ${sizeClass} overflow-hidden selection:bg-indigo-100 selection:text-indigo-900 dark:selection:bg-indigo-900 dark:selection:text-indigo-100 bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300`}>
       {!isFullscreen && (
         <Sidebar 
           activeCategory={activeCategory} 
@@ -336,6 +361,10 @@ function AppInterface({ onBack, theme, setTheme, language, setLanguage }: {
         setTheme={setTheme}
         language={language}
         setLanguage={setLanguage}
+        fontFamily={fontFamily}
+        setFontFamily={setFontFamily}
+        fontSize={fontSize}
+        setFontSize={setFontSize}
         aiModel={aiModel}
         setAiModel={setAiModel}
         dropsCount={drops.length}
@@ -595,12 +624,15 @@ function InputArea({ onDrop, isProcessing }: { onDrop: (text: string) => void, i
           onDragOver={handleDragOver}
         >
         {showSkillMenu && (
-          <div className="absolute bottom-full left-4 mb-2 w-64 bg-white dark:bg-zinc-800 rounded-2xl shadow-xl border border-zinc-100 dark:border-zinc-700 overflow-hidden z-50">
+          <div className="absolute bottom-full left-4 mb-2 w-64 bg-white dark:bg-zinc-800 rounded-2xl shadow-xl border border-zinc-100 dark:border-zinc-700 overflow-hidden z-[100]">
             <div className="p-2 text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider border-b border-zinc-100 dark:border-zinc-700">
               快速指令
             </div>
-            <div className="p-1">
-              {SKILLS.filter(s => s.label.includes(skillFilter) || s.id.includes(skillFilter)).map(skill => (
+            <div className="p-1 max-h-64 overflow-y-auto">
+              {SKILLS.filter(s => {
+                const filter = skillFilter.trim().toLowerCase();
+                return !filter || s.label.toLowerCase().includes(filter) || s.id.toLowerCase().includes(filter);
+              }).map(skill => (
                 <button
                   key={skill.id}
                   onClick={() => insertSkill(skill.prompt)}
@@ -610,7 +642,10 @@ function InputArea({ onDrop, isProcessing }: { onDrop: (text: string) => void, i
                   <span className="font-medium">{skill.label}</span>
                 </button>
               ))}
-              {SKILLS.filter(s => s.label.includes(skillFilter) || s.id.includes(skillFilter)).length === 0 && (
+              {SKILLS.filter(s => {
+                const filter = skillFilter.trim().toLowerCase();
+                return !filter || s.label.toLowerCase().includes(filter) || s.id.toLowerCase().includes(filter);
+              }).length === 0 && (
                 <div className="px-3 py-2 text-sm text-zinc-500 text-center">无匹配指令</div>
               )}
             </div>
